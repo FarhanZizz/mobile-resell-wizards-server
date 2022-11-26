@@ -15,12 +15,30 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 async function run() {
     try {
         const productCollections = client.db('mobile-resell-wizards').collection('products')
+        const userCollections = client.db('mobile-resell-wizards').collection('user')
 
         app.get('/category/:id', async (req, res) => {
             const id = req.params.id;
             const query = { category: id };
             const result = await productCollections.find(query).toArray()
             res.send(result)
+        })
+        app.get('/users', async (req, res) => {
+            const query = {}
+            const result = await userCollections.find(query).toArray()
+            res.send(result)
+        })
+        app.post('/users', async (req, res) => {
+            const user = req.body;
+            const query = { email: user.email }
+            const exists = await userCollections.find(query).toArray()
+            if (!exists[0]) {
+                const result = await userCollections.insertOne(user);
+                res.send(result)
+            }
+            else {
+                res.send(exists)
+            }
         })
     }
     finally { }

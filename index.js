@@ -47,6 +47,11 @@ async function run() {
                 res.send(exists)
             }
         })
+        app.post('/products', async (req, res) => {
+            const product = req.body;
+            const result = await productCollections.insertOne(product)
+            res.send(result);
+        })
         app.post('/bookings', async (req, res) => {
             const booking = req.body;
             const query = {

@@ -16,6 +16,7 @@ async function run() {
     try {
         const productCollections = client.db('mobile-resell-wizards').collection('products')
         const userCollections = client.db('mobile-resell-wizards').collection('user')
+        const bookingsCollection = client.db('mobile-resell-wizards').collection('bookings')
 
         app.get('/category/:id', async (req, res) => {
             const id = req.params.id;
@@ -46,6 +47,23 @@ async function run() {
                 res.send(exists)
             }
         })
+        app.post('/bookings', async (req, res) => {
+            const booking = req.body;
+            const query = {
+                email: booking.email,
+                product: booking.product,
+            }
+
+            const alreadyBooked = await bookingsCollection.find(query).toArray();
+
+            if (alreadyBooked.length) {
+                const message = `You already have a booking for ${booking.product}`
+                return res.send({ acknowledged: false, message })
+            }
+
+            const result = await bookingsCollection.insertOne(booking);
+            res.send(result);
+        });
     }
     finally { }
 }

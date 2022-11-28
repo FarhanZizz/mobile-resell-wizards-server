@@ -64,6 +64,18 @@ async function run() {
             const result = await productCollections.deleteOne(query);
             res.send(result)
         })
+        app.patch('/product/advertise/:id', async (req, res) => {
+            const id = req.params.id;
+            const filter = { _id: ObjectId(id) }
+            const options = { upsert: false };
+            const updateDoc = {
+                $set: {
+                    advertised: true
+                },
+            };
+            const result = await productCollections.updateOne(filter, updateDoc, options);
+            res.send(result)
+        })
         app.post('/bookings', async (req, res) => {
             const booking = req.body;
             const query = {

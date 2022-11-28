@@ -64,6 +64,14 @@ async function run() {
             const result = await productCollections.deleteOne(query);
             res.send(result)
         })
+        app.get('/products/advertised', async (req, res) => {
+            const query = {
+                advertised: true,
+                status: "Available"
+            }
+            const result = await productCollections.find(query).toArray()
+            res.send(result)
+        })
         app.patch('/product/advertise/:id', async (req, res) => {
             const id = req.params.id;
             const filter = { _id: ObjectId(id) }

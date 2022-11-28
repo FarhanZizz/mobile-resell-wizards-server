@@ -34,6 +34,20 @@ async function run() {
             const result = await userCollections.find(query).toArray()
             res.send(result)
         })
+        app.patch('/seller/verify', async (req, res) => {
+            const queryEmail = req.query.email;
+            const filter = { email: queryEmail }
+            const query = { seller_email: queryEmail }
+            const options = { upsert: false };
+            const updateDoc = {
+                $set: {
+                    verified: true,
+                },
+            };
+            const productResult = await productCollections.updateMany(query, updateDoc, options)
+            const userResult = await userCollections.updateOne(filter, updateDoc, options);
+            res.send(productResult)
+        })
         app.get('/buyers', async (req, res) => {
             const query = { type: "buyer" }
             const result = await userCollections.find(query).toArray()
@@ -95,6 +109,23 @@ async function run() {
             const updateDoc = {
                 $set: {
                     advertised: true
+                },
+            };
+            const result = await productCollections.updateOne(filter, updateDoc, options);
+            res.send(result)
+        })
+        app.get('/products/reports', async (req, res) => {
+            const query = { reported: true }
+            const result = await productCollections.find(query).toArray()
+            res.send(result)
+        })
+        app.patch('/product/report/:id', async (req, res) => {
+            const id = req.params.id;
+            const filter = { _id: ObjectId(id) }
+            const options = { upsert: false };
+            const updateDoc = {
+                $set: {
+                    reported: true
                 },
             };
             const result = await productCollections.updateOne(filter, updateDoc, options);

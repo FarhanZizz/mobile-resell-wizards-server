@@ -29,6 +29,22 @@ async function run() {
             const result = await userCollections.find(query).toArray()
             res.send(result)
         })
+        app.get('/sellers', async (req, res) => {
+            const query = { type: "seller" }
+            const result = await userCollections.find(query).toArray()
+            res.send(result)
+        })
+        app.get('/buyers', async (req, res) => {
+            const query = { type: "buyer" }
+            const result = await userCollections.find(query).toArray()
+            res.send(result)
+        })
+        app.delete('/user/delete/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) }
+            const result = await userCollections.deleteOne(query);
+            res.send(result)
+        })
         app.get('/user', async (req, res) => {
             const queryEmail = req.query.email;
             const query = { email: queryEmail }

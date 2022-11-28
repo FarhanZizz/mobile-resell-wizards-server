@@ -131,21 +131,27 @@ async function run() {
             const result = await productCollections.updateOne(filter, updateDoc, options);
             res.send(result)
         })
+        app.get('/bookings', async (req, res) => {
+            const queryEmail = req.query.email;
+            const query = { email: queryEmail }
+            const result = await bookingsCollection.find(query).toArray();
+            res.send(result);
+        })
         app.post('/bookings', async (req, res) => {
-            const booking = req.body;
+            const data = req.body;
             const query = {
-                email: booking.email,
-                product: booking.product,
+                email: data.email,
+                product: data.product,
             }
 
             const alreadyBooked = await bookingsCollection.find(query).toArray();
 
             if (alreadyBooked.length) {
-                const message = `You already have a booking for ${booking.product}`
+                const message = `You already have a booking for ${data.product}`
                 return res.send({ acknowledged: false, message })
             }
 
-            const result = await bookingsCollection.insertOne(booking);
+            const result = await bookingsCollection.insertOne(data);
             res.send(result);
         });
     }
